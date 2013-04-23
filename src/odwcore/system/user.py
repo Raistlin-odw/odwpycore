@@ -1,8 +1,9 @@
+import os
+
 def getUserName():
     '''
-    get login user name
+    return login user name
     '''
-    # test
     # For Linux
     if os.name == 'posix':
         # for linux, we use getpass
@@ -20,17 +21,21 @@ def getUserName():
         s.decode(bzrlib.user_encoding)
         """
         import ctypes
-        from ctypes.wintypes import MAX_PATH
         UNLEN = 256
+        advapi32 = ctypes.windll.advapi32
         try:
-            advapi32 = ctypes.windll.advapi32
             GetUserName = getattr(advapi32, 'GetUserNameW')
-        except :
+        except AttributeError:
+            print 'getUserName Error: can not find attribute "GetUserNameW1"'
+            return None
+        except Exception:
+            # use simple print to log exception
+            import traceback
+            traceback.print_exc()
             # otherwise try env variables
-            return os.environ.get('USERNAME', None)
+            return os.environ.get('USERNAME')
         else:
             buf = ctypes.create_unicode_buffer(UNLEN+1)
             n = ctypes.c_int(UNLEN+1)
             if GetUserName(buf, ctypes.byref(n)):
                 return buf.value
-    
