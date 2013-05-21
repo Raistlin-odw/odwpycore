@@ -40,14 +40,18 @@ class MyEvent (DeadlineEventListener):
 			
 	def get_post_bat_file(self):
 		l = self.ShotName.split('_')
-		outputFilePath = '%s/%s/%s/%s' % (IMAGES_PB,l[0]+'_'+l[1],l[2],self.ShotName)
+		#outputFilePath = '%s/%s/%s/%s' % (IMAGES_PB,l[0]+'_'+l[1],l[2],self.ShotName)
+		outputFilePath = '{imPB}/{ep}/{seq}/{shot}'.format(imPB=IMAGES_PB,ep='%s_%s' % (l[0],l[1]),\
+														seq=l[2],shot=self.ShotName)
 		outputFileName = '%s/%s' % (outputFilePath,self.ShotName)
 		self.File_Bat_Post= '%s.bat' % outputFileName
 		print self.File_Bat_Post
 		
 	def get_pre_bat_file(self):
 		l = self.ShotName.split('_')
-		mayaScene_dir = '%s/%s/%s/%s' % (SCENE_PB,l[0]+'_'+l[1],l[2],self.ShotName)
+		#mayaScene_dir = '%s/%s/%s/%s' % (SCENE_PB,l[0]+'_'+l[1],l[2],self.ShotName)
+		mayaScene_dir = '{scene}/{ep}/{seq}/{shot}'.format(scene=SCENE_PB,ep='%s_%s' % (l[0],l[1]),\
+														seq=l[2],shot=self.ShotName)
 		self.File_Bat_Pre = '%s/%s.bat' % (mayaScene_dir,self.ShotName)
 		self.File_Trigger = '%s/%s.txt' % (mayaScene_dir,self.ShotName)
 		print self.File_Bat_Pre
