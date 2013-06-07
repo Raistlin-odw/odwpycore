@@ -1,17 +1,18 @@
-'''
+#!/usr/bin/env python2.6
+# -*- coding: utf-8 -*-
+"""
 Created on 2013-5-13
 
 @author: lavenda
-'''
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
+"""
+
 import os
 
 
 def __dirOper(srcPath, countOfOpen):
-    '''
+    """
     the directory operation.
-    '''
+    """
     isFit = True
     for element in os.listdir(srcPath):
         elementPath = os.path.join(srcPath,element)
@@ -25,9 +26,9 @@ def __dirOper(srcPath, countOfOpen):
 
 
 def __fileOper(srcPath):
-    '''
+    """
     the file operation.
-    '''
+    """
     try:
         fileStream = open(srcPath, 'r')
         context = fileStream.read(500)
@@ -43,7 +44,7 @@ def __fileOper(srcPath):
 
 
 def isExistAndOpen(srcPath, countOfOpenInDir=6):
-    '''
+    """
     Check the source path is exist or not, and whether is readable.
     
     @param srcPath: the source path
@@ -52,7 +53,7 @@ def isExistAndOpen(srcPath, countOfOpenInDir=6):
     @type countOfOpenInDir: int type(default:5)
     
     @return: boolean type, means it's exist and readable or not.
-    '''
+    """
     if os.path.isdir(srcPath):
         return __dirOper(srcPath, countOfOpenInDir)
     elif os.path.isfile(srcPath):
@@ -61,8 +62,8 @@ def isExistAndOpen(srcPath, countOfOpenInDir=6):
         return None
     
 
-
-
+def main():
+    pass
 
 if __name__ == '__main__':
-    print isExistAndOpen(srcPath=r'C:\Users\huangchengqi\Desktop\a')
+    main()

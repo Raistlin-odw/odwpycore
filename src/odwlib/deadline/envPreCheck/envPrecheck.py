@@ -1,11 +1,11 @@
+#!/usr/bin/env python2.6
+# -*- coding: utf-8 -*-
 """
 Created on 2013-5-13
 
 @author: lavenda
 """
 
-#!/usr/bin/env python2.6
-# -*- coding:utf-8 -*-
 
 import os
 import ctypes
@@ -26,7 +26,7 @@ class EnvPrecheck(object):
     PLUGIN_FOLDER = ['//server-cgi/workflowtools_ep20']
     
     MAYA_VERSION = '2012-x64'
-    RENDERFARM_ACCOUNT_NAME = 'renderfarm'
+    STANDARD_ACCOUNTS = ['renderfarm', 'huangchengqi']
     
     def __init__(self):
         self.resultStrList = []
@@ -150,12 +150,12 @@ class EnvPrecheck(object):
         if isRight:
             return isRight
         else:
-            if self.RENDERFARM_ACCOUNT_NAME in userDocumentsPath:
+            if self._isStandardAccount(userDocumentsPath):
                 if self._copyAndBackupMayaEnvFile(myMayaEnvFile):
                     isRight = self._checkMayaEnvFile(myMayaEnvFile)
             else:
                 self._writeIntoResultStringByType(('the current account is '
-                                                  'not <RENDERFARM_ACCOUNT>'),
+                                                  'not <STANDARD_ACCOUNT>'),
                                                   'warning')
         
         return isRight
@@ -193,6 +193,22 @@ class EnvPrecheck(object):
         self._writeIntoResultStringByType('<%s> ...... CHECK OK' 
                                                 % myMayaEnvFile, 'l2')
         return True
+    
+    
+    def _isStandardAccount(self, userDocumentsPath):
+        """
+        check the current account is a standrad account or not.
+        
+        @param userDocumentsPath: user document path
+        @type userDocumentsPath: string type
+        
+        @return: boolean type
+        """
+        isStandardAccount = False
+        for renderFarmAccount in self.STANDARD_ACCOUNTS:
+            if renderFarmAccount in userDocumentsPath:
+                isStandardAccount = True
+        return isStandardAccount
     
     
     def _copyAndBackupMayaEnvFile(self, myMayaEnvFile):
