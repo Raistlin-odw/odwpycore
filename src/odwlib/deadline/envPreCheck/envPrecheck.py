@@ -12,11 +12,11 @@ import ctypes
 import shutil
 import filecmp
 from ctypes.wintypes import MAX_PATH
-import fileOper
+from odwlib.deadline.envPreCheck import fileOper
 
 
 class EnvPrecheck(object):
-
+    """the deadline env precheck"""
     
     SERVER = ['//server-cgi/project']
     MAYA_ENV_FILE = ['//server-cgi/workflowtools_ep20/Install/Maya.env']
@@ -188,7 +188,7 @@ class EnvPrecheck(object):
                 self._writeIntoResultStringByType('<%s> is not right' 
                                                   % myMayaEnvFile, 'error')
                 return False
-        except:
+        except Exception:
             self._writeIntoResultStringByType('open maya env error', 'error')
         self._writeIntoResultStringByType('<%s> ...... CHECK OK' 
                                                 % myMayaEnvFile, 'l2')
@@ -219,7 +219,7 @@ class EnvPrecheck(object):
         try:
             reName = myMayaEnvFile + '.bak'
             shutil.move(myMayaEnvFile, reName) 
-        except:
+        except Exception:
             self._writeIntoResultStringByType('backup maya env file error',
                                               'error')
             return False
@@ -233,7 +233,7 @@ class EnvPrecheck(object):
         """
         try:
             shutil.copy(self.MAYA_ENV_FILE[0], myMayaEnvFile)
-        except:
+        except Exception:
             self._writeIntoResultStringByType('copy maya env file error',
                                               'error')
             return False

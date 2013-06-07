@@ -15,7 +15,7 @@ def __dirOper(srcPath, countOfOpen):
     """
     isFit = True
     for element in os.listdir(srcPath):
-        elementPath = os.path.join(srcPath,element)
+        elementPath = os.path.join(srcPath, element)
         if os.path.isfile(elementPath):
 #            print element
             isFit = __fileOper(elementPath)
@@ -32,8 +32,8 @@ def __fileOper(srcPath):
     try:
         fileStream = open(srcPath, 'r')
         context = fileStream.read(500)
-    except:
-        print '%s is error'%srcPath
+    except Exception:
+        print '%s is error' % srcPath
         return False
     finally:
         fileStream.close()
