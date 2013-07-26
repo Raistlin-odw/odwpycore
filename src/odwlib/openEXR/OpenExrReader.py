@@ -19,58 +19,35 @@ class ExrCheck(object):
     """
     OpenExr black channel check 
     """
-    def __init__(self):
+    def __init__(self,exrPath):
         self._exrFile = None
         self._header = None
+        self.setExr(exrPath)
+        #self._resolution = None
+        #self._channel = None
         pass
 
     def setExr(self,filepath):
         """
-        1.check filepath exists
-        2.do exr check first to make sure the input filepath IS a exr image
-        3.set it as target
+        init the exr file 
         @param: filepath,the Exr image path
         @type: string
-
-        @rtype: bool
-        @return: Return True if filepath is a exr image. 
-        Returns False if filepath is not a exr image or not exists  
         """
-        if not os.path.exists(filepath):
-            print '%s not exists'%filepath
-            return False
-
-
-        if not OpenEXR.isOpenExrFile(filepath):
-            print 'the %s is not a exr file'%filepath
-            return False
-
-        else:
+        try:
             self._exrFile = OpenEXR.InputFile(filepath)
-            self._header = self._exrFile.header()
-            return True
+        except IOError,e:
+            print("Invalid input file : {0}".format(e))
+        self._header = self._exrFile.header()
 
-    def isExrSet(self):
+    @property
+    def resolution(self):
         """
-        check whether the exr image has been set to self._exrFile
-        @return: Return True if self._exrFile and self._header have been set
-        return False if self._exrFile and self._header are empty
-        """
-        if (not self._exrFile) or (not self._header):
-            return False
-        else:
-            return True
-
-    def getRes(self):
-        """
+        for property self._resolution get
         get resolution from exr file Header
 
         @return: (x,y)
         @rtype: tuple
         """
-        if not self.isExrSet():
-            return None
-        
         xmax = self._header['dataWindow'].max.x
         xmin = self._header['dataWindow'].min.x
         ymax = self._header['dataWindow'].max.y
@@ -79,14 +56,46 @@ class ExrCheck(object):
         self._y = ymax - ymin + 1
         return (self._x,self._y)
 
-    def getChannel(self):
+    @resolution.setter
+    def setRes(self):
+        """
+        for property self._resolution set
+        empty
+        """
+        pass
+
+    @resolution.deleter
+    def delRex(self):
+        """
+        for property self._resolution set
+        empty
+        """
+        pass
+
+    @property
+    def channel(self):
         """
         get Channel name from exr file header
         @return: a string list with channel name,like ['A','R','G','B']
         @rtype: list
         """
-        
         return self._header['channels'].keys()
+
+    @channel.setter
+    def setChannel(self):
+        """
+        for property self._channel set
+        empty
+        """
+        pass
+
+    @channel.deleter
+    def delChannel(self):
+        """
+        for property self._channel set
+        empty
+        """
+        pass
 
     def arrayType(self,channel):
         """
@@ -96,12 +105,6 @@ class ExrCheck(object):
                 if channel name error return None
         @rtype: string or None
         """
-        if not self.isExrSet():
-            return None
-        if channel not in self._header['channels'].keys():
-            print 'error channel name'
-            return None
-
         channelTypeV = self._header['channels'][channel].type.v
         rType = None
 
@@ -114,7 +117,8 @@ class ExrCheck(object):
         if channelTypeV == Imath.PixelType(OpenEXR.UINT).v:
             #c type unsigned long
             rType = 'L'
-        print 'rType is ',rType
+
+        #print("rType is {0}".format(rType))
 
         return rType
 
@@ -150,13 +154,9 @@ class ExrCheck(object):
         @return: sha1 code from exr image channel
         @rtype: string
         """
-        if not self.isExrSet():
-            return None
-        if channel not in self._header['channels'].keys():
-            print 'error channel name'
-            return None  
+
         channelData = self._exrFile.channel(channel)
-        print channelData[:15]
+        #print(channelData[:15])
 
         #print type(arrayStr)
         h = sha1()
@@ -171,36 +171,33 @@ class ExrCheck(object):
         @return: true if channel is empty,false if it is not
         @rtype: bool
         """
+        if channel not in self._header['channels'].keys():
+            raise ValueError,'error channel name'
         dataSha1 = self.getExrChannelDataSha1(channel)
-        res = self.getRes()
+        res = self.resolution
         aType = self.arrayType(channel)
         #print aType
+        #print res
         fakeSha1 = self.genarateChannelDataSha1(res[0],res[1],aType)
-        print dataSha1
-        print fakeSha1
-        if dataSha1 == fakeSha1:
+        #print(dataSha1)
+        #print(fakeSha1)
+        print (dataSha1 == fakeSha1)
+        return dataSha1 == fakeSha1
+
+    def isColorBlank(self):
+        """
+        check whether the channel is blank
+        
+        @return: true if channel is empty,false if it is not
+        @rtype: bool
+        """
+        keysList = self._header['channels'].keys()
+        if ("R" not in keysList) 
+            or ("G" not in keysList)
+            or ("B" not in keysList):
+            raise ValueError,"invalid color Channel :{0}".format(keysList)
+        if self.isChannelBlank("R") and self.isChannelBlank("G") and self.isChannelBlank("B"):
             return True
         else:
             return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        pass
